@@ -11,7 +11,7 @@ import java.util.*
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = UUID::class)
-object ByteUUIDSerializer : KSerializer<UUID> {
+object BinaryUUIDSerializer : KSerializer<UUID> {
     override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: UUID) {

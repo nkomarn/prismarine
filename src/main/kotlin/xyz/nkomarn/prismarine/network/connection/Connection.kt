@@ -1,5 +1,6 @@
-package xyz.nkomarn.prismarine.protocol.connection
+package xyz.nkomarn.prismarine.network.connection
 
+import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.GlobalScope
@@ -9,18 +10,23 @@ import xyz.nkomarn.prismarine.protocol.FlowDirection
 import xyz.nkomarn.prismarine.protocol.Protocol
 import xyz.nkomarn.prismarine.protocol.encoding.MinecraftPacketEncoder
 import xyz.nkomarn.prismarine.protocol.encoding.writeVarInt
-import xyz.nkomarn.prismarine.protocol.handler.DefaultPacketHandler
-import xyz.nkomarn.prismarine.protocol.packet.Packet
+import xyz.nkomarn.prismarine.protocol.Packet
+import xyz.nkomarn.prismarine.protocol.handler.ServerboundPacketHandler
+import xyz.nkomarn.prismarine.protocol.handler.VanillaHandshakePacketHandler
 
 data class Connection(
     var state: ConnectionState,
+    val socket: Socket,
     val readChannel: ByteReadChannel,
     val writeChannel: ByteWriteChannel,
-//     val packetHandler: PacketHandler,
 ) {
-    val packetHandler = DefaultPacketHandler(this)
+    var packetHandler: ServerboundPacketHandler = VanillaHandshakePacketHandler(this)
     val isOpen: Boolean
         get() = !readChannel.isClosedForRead
+
+    fun disconnect() {
+        socket.close()
+    }
 
     fun <T : Packet> send(packet: T) {
         val packetId = Protocol.getPacketId(packet)

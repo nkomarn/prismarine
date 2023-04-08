@@ -1,4 +1,4 @@
-package xyz.nkomarn.prismarine.protocol.connection
+package xyz.nkomarn.prismarine.network.connection
 
 import kotlinx.serialization.KSerializer
 import xyz.nkomarn.prismarine.protocol.FlowDirection

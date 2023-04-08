@@ -12,7 +12,7 @@ class Prismarine : CoroutineScope {
     private val connectionListener = InboundConnectionListener()
 
     init {
-        Protocol.init()
-       connectionListener.bind(25565)
+        Protocol.registerAll()
+        connectionListener.bind(25565)
     }
 }

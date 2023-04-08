@@ -6,9 +6,10 @@ import kotlinx.coroutines.*
 import xyz.nkomarn.prismarine.protocol.FlowDirection
 import xyz.nkomarn.prismarine.protocol.encoding.MinecraftPacketDecoder
 import xyz.nkomarn.prismarine.protocol.encoding.readVarInt
-import xyz.nkomarn.prismarine.protocol.connection.Connection
-import xyz.nkomarn.prismarine.protocol.connection.ConnectionState
-import xyz.nkomarn.prismarine.protocol.packet.ServerboundPacket
+import xyz.nkomarn.prismarine.network.connection.Connection
+import xyz.nkomarn.prismarine.network.connection.ConnectionState
+import xyz.nkomarn.prismarine.protocol.ServerboundPacket
+import xyz.nkomarn.prismarine.protocol.handler.ServerboundPacketHandler
 
 class InboundConnectionListener : CoroutineScope {
     override val coroutineContext = Dispatchers.IO + SupervisorJob()
@@ -27,7 +28,7 @@ class InboundConnectionListener : CoroutineScope {
                 val socket = serverSocket.accept()
                 val readChannel = socket.openReadChannel()
                 val writeChannel = socket.openWriteChannel(autoFlush = true)
-                val connection = Connection(ConnectionState.HANDSHAKING, readChannel, writeChannel)
+                val connection = Connection(ConnectionState.HANDSHAKING, socket, readChannel, writeChannel)
 
                 println("Accepted incoming connection: ${socket.localAddress}")
                 listenForPackets(connection)
@@ -58,7 +59,7 @@ class InboundConnectionListener : CoroutineScope {
 
                 val decoder = MinecraftPacketDecoder(data)
                 val packet = serializer.deserialize(decoder)
-                    ?.let { it as ServerboundPacket }
+                    ?.let { it as ServerboundPacket<ServerboundPacketHandler> }
                     ?: continue
 
                 println("Read packet #$packetId w/ length $length: $packet")

@@ -3,7 +3,7 @@
     UUIDSerializer::class,
 )
 
-package xyz.nkomarn.prismarine.protocol
+package xyz.nkomarn.prismarine.protocol.status
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
