@@ -1,7 +1,7 @@
 package xyz.nkomarn.prismarine.protocol.handler
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import xyz.nkomarn.prismarine.network.connection.Connection
 import xyz.nkomarn.prismarine.network.connection.ConnectionState
 import xyz.nkomarn.prismarine.protocol.handshake.HandshakePacketHandler
@@ -29,15 +29,16 @@ class VanillaStatusPacketHandler(private val connection: Connection) : StatusPac
         val sample = listOf(
             ServerStatus.Players.Sample("kytachips", UUID.randomUUID()),
             ServerStatus.Players.Sample("viztea", UUID.randomUUID()),
+            ServerStatus.Players.Sample("ur mom", UUID.randomUUID()),
         )
 
         connection.send(
             ClientboundStatusResponsePacket(
                 ServerStatus(
                     Component.text()
-                        .append(Component.text("greetings from"))
+                        .append(Component.text("greetings from", TextColor.fromHexString("#99f6e4")))
                         .append(Component.space())
-                        .append(Component.text("prismarine!", NamedTextColor.AQUA))
+                        .append(Component.text("prismarine!", TextColor.fromHexString("#2dd4bf")))
                         .build(),
                     ServerStatus.Version("1.19.4", 762),
                     ServerStatus.Players(sample.size, 20, sample),

@@ -43,7 +43,7 @@ class InboundConnectionListener : CoroutineScope {
             while (true) {
                 readChannel.awaitContent()
 
-                if (!connection.isOpen) {
+                if (readChannel.isClosedForRead) {
                     break
                 }
 
@@ -62,7 +62,7 @@ class InboundConnectionListener : CoroutineScope {
                     ?.let { it as ServerboundPacket<ServerboundPacketHandler> }
                     ?: continue
 
-                println("Read packet #$packetId w/ length $length: $packet")
+                println("Read packet #$packetId [$length bytes]: $packet")
                 packet.handle(connection.packetHandler)
             }
 

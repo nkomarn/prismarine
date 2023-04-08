@@ -22,3 +22,19 @@ object UUIDSerializer : KSerializer<UUID> {
         return UUID.fromString(decoder.decodeString())
     }
 }
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = UUID::class)
+object BinaryUUIDSerializer : KSerializer<UUID> {
+    /* todo - this is wrong */
+    override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: UUID) {
+        encoder.encodeLong(value.mostSignificantBits)
+        encoder.encodeLong(value.leastSignificantBits)
+    }
+
+    override fun deserialize(decoder: Decoder): UUID {
+        return UUID(decoder.decodeLong(), decoder.decodeLong())
+    }
+}

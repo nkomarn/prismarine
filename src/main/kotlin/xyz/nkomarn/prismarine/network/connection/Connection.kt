@@ -21,8 +21,6 @@ data class Connection(
     val writeChannel: ByteWriteChannel,
 ) {
     var packetHandler: ServerboundPacketHandler = VanillaHandshakePacketHandler(this)
-    val isOpen: Boolean
-        get() = !readChannel.isClosedForRead
 
     fun disconnect() {
         socket.close()
@@ -30,7 +28,6 @@ data class Connection(
 
     fun <T : Packet> send(packet: T) {
         val packetId = Protocol.getPacketId(packet)
-        println("Sending packet #$packetId: $packet")
 
         val serializer = state.getSerializer(packetId, FlowDirection.CLIENTBOUND)
             ?.let { it as KSerializer<T> }
@@ -43,6 +40,7 @@ data class Connection(
         GlobalScope.launch { /* todo - use dedicated network scope */
             writeChannel.writeVarInt(data.size)
             writeChannel.writeFully(data.build().readBytes())
+            println("Wrote packet #$packetId [${data.size} bytes]: $packet")
         }
     }
 }
